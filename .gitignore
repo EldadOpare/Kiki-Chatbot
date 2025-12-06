@@ -44,10 +44,10 @@ venv.bak/
 *.sqlite
 *.sqlite3
 chroma_db/
-vector_db/
+# vector_db/ (tracked with Git LFS)
 
 # Large data files
-pdf_datasets/
+# pdf_datasets/ (tracked with Git LFS)
 datasets/
 data/
 
