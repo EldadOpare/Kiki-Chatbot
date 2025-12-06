@@ -1,229 +1,187 @@
-# Kiki - Ghana Knowledge Chatbot
+# Kiki - Ghana Knowledge Chatbot 🇬🇭
 
-A sophisticated AI chatbot designed to provide comprehensive information about Ghana. Built with Gemma 2B language model, ChromaDB vector database, and advanced RAG (Retrieval-Augmented Generation) capabilities.
+An intelligent AI chatbot that answers questions about Ghana using official government documents, budget reports, and legal acts. Built with the Gemma 2B language model and powered by a comprehensive Ghana-specific knowledge base.
 
-## 🌟 Features
+## ✨ What Kiki Can Do
 
-### Core Functionality
-- **RAG-powered Chat**: Retrieval-augmented generation using Ghana-specific knowledge base
-- **Standard Chat Mode**: General conversation without database retrieval
-- **Voice Interface**: Speech-to-text and text-to-speech capabilities
-- **Memory Management**: Conversation history with intelligent summarization
-- **Multi-format Document Processing**: PDF, DOCX, PPTX, CSV, Excel support
-- **OCR Integration**: Extract text from images
-- **Web Scraping**: Real-time URL content extraction
+- **Ask Questions About Ghana**: Get accurate answers from 60+ official documents including budget reports, government acts, and policies
+- **Voice Chat**: Talk to Kiki using your microphone and hear responses out loud
+- **Upload Documents**: Add your own PDFs and documents to expand Kiki's knowledge
+- **Web Page Learning**: Give Kiki a website URL and it will learn from that content
+- **Smart Memory**: Kiki remembers your conversation and provides context-aware responses
+- **Multiple Chat Modes**: 
+  - RAG Mode: Questions answered using Ghana documents
+  - Chat Mode: General conversation without document lookup
 
-### Advanced Features
-- **Semantic Search**: Multi-qa-MiniLM-L6-dot-v1 embeddings for accurate retrieval
-- **Smart Chunking**: Intelligent text segmentation for optimal context
-- **Memory Optimization**: BART-based conversation summarization
-- **File Upload**: Add documents to knowledge base
-- **Temporary RAG**: Query specific files without affecting main database
+## 🗂️ Ghana Knowledge Base
 
-## 🏗️ Architecture
+Kiki knows about Ghana from these official sources:
+- **Government Budget Documents** (2021-2026): Citizens budgets, detailed ministry budgets
+- **Legal Acts**: Income Tax Act, VAT Act, Electronic Transfer Levy Act, Police Service Act
+- **Regulatory Documents**: Bank regulations, customs acts, education bills
+- **Stock Exchange Reports**: Ghana Stock Exchange monthly summaries
+- **Multi-language Support**: Documents available in English, Twi, Ewe, Ga, Dangme, Gonja, and Nzema
 
-### Backend
-- **Flask Web Application**: RESTful API server
-- **Gemma 2B Model**: Local language model with Metal GPU acceleration
-- **ChromaDB**: Vector database for document storage and retrieval
-- **PyMuPDF**: PDF text extraction
-- **Beautiful Soup**: Web scraping capabilities
-- **OCR Engine**: Image text extraction
+## 🚀 Quick Setup
 
-### Frontend
-- **Vanilla JavaScript**: Responsive web interface
-- **Web Speech API**: Voice input/output
-- **Modern CSS**: Clean, professional UI
-- **Real-time Communication**: Async chat interface
-
-### Data Processing Pipeline
-1. **Document Ingestion**: Multi-format file support
-2. **Text Extraction**: Format-specific processing
-3. **Semantic Conversion**: Tabular data to natural language
-4. **Chunking Strategy**: Overlapping text segments
-5. **Vector Embedding**: High-quality semantic representations
-6. **Storage**: Persistent ChromaDB collections
-
-## 📁 Project Structure
-
-```
-├── python/                    # Backend Python modules
-│   ├── app.py                # Main Flask application
-│   ├── model_utilities.py    # RAG and query processing
-│   ├── chroma_utilities.py   # Document processing utilities
-│   ├── memory_system.py      # Conversation memory management
-│   ├── ocr.py               # Image text extraction
-│   └── populate_db.py       # Database population script
-├── html/                     # Frontend templates
-│   ├── kiki_chat.html       # Main chat interface
-│   ├── rag_file.html        # File upload interface
-│   └── scrape_url.html      # URL scraping interface
-├── js/                       # JavaScript modules
-│   ├── script.js            # Main chat functionality
-│   ├── voice.js             # Voice interface
-│   ├── rag_file.js          # File handling
-│   └── scrape_url.js        # URL processing
-├── css/                      # Stylesheets
-│   └── style.css            # Main styling
-├── assets/                   # Static assets
-└── docs/                     # Documentation
+### 1. Clone the Project
+```bash
+git clone https://github.com/EldadOpare/Kiki-Chatbot.git
+cd Kiki-Chatbot
 ```
 
-## 🚀 Quick Start
+### 2. Create Virtual Environment
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
 
-### Prerequisites
-- Python 3.8+
-- 8GB+ RAM recommended
-- Modern web browser (Chrome/Edge for voice features)
+### 3. Install Requirements
+```bash
+pip install -r requirements.txt
+```
 
-### Installation
+### 4. Start Kiki
+```bash
+# Option 1: Use the startup script (recommended)
+bash start_kiki.sh
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/kiki-ghana-chatbot.git
-   cd kiki-ghana-chatbot
-   ```
+# Option 2: Start manually
+cd python
+python app.py
+```
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 5. Open Your Browser
+Go to: **http://localhost:5081**
 
-3. **Download the Gemma 2B model**
-   - Download the Gemma 2B GGUF model file
-   - Place it in the `model/` directory as `gemma2-2b.bin`
+That's it! Kiki is ready to answer your questions about Ghana.
 
-4. **Populate the knowledge base** (optional)
-   ```bash
-   cd python
-   python populate_db.py
-   ```
+## �️ Technical Details
 
-5. **Start the application**
-   ```bash
-   cd python
-   python app.py
-   ```
+### What's Included
+- **Gemma 2B AI Model**: 1.6GB local language model (already downloaded via Git LFS)
+- **Vector Database**: Pre-built embeddings of all Ghana documents
+- **Web Interface**: HTML/CSS/JavaScript frontend
+- **Voice Support**: Speech-to-text and text-to-speech
+- **Document Processing**: Support for PDF, Word, Excel, PowerPoint files
 
-6. **Open your browser**
-   Navigate to `http://localhost:5081`
+### System Requirements
+- **RAM**: 4GB minimum, 8GB recommended
+- **Storage**: 3GB for the complete project
+- **Python**: 3.8 or newer
+- **Browser**: Chrome, Edge, or Safari (for voice features)
 
-## 💡 Usage
+## 💬 How to Use Kiki
 
-### Chat Interface
-- **RAG Mode**: Ask questions about Ghana using the knowledge base
-- **Chat Mode**: General conversation without database retrieval
-- **Voice Input**: Click microphone to speak your questions
-- **Voice Output**: Toggle auto-speak for responses
+### Basic Chat
+1. Open http://localhost:5081 in your browser
+2. Type your question about Ghana in the chat box
+3. Click "Send" or press Enter
+4. Kiki will search the knowledge base and provide an answer
 
-### File Upload
-- Support for PDF, Word, PowerPoint, CSV, Excel files
-- Files are processed and added to the knowledge base
-- Temporary RAG: Query specific files independently
+### Voice Chat
+1. Click the microphone button
+2. Speak your question clearly
+3. Wait for Kiki to process and respond
+4. Toggle "Auto-speak responses" to hear answers out loud
 
-### URL Scraping
-- Extract content from web pages
-- Add scraped content to knowledge base
-- Real-time content processing
+### Adding Your Own Documents
+1. Go to the "RAG File" tab
+2. Upload a PDF, Word, or Excel file
+3. Kiki will process it and add it to the knowledge base
+4. Ask questions about your uploaded document
 
-### Memory Management
-- Automatic conversation history
-- Intelligent summarization when context gets too long
-- Separate memory for RAG and chat modes
+### Learning from Websites
+1. Go to the "Scrape URL" tab
+2. Paste a website URL
+3. Kiki will extract the content and learn from it
+4. Ask questions about the website content
 
-## 🔧 Configuration
+## 📊 Example Questions for Kiki
 
-### Model Settings
-- Context window: 8192 tokens
-- GPU acceleration: Metal (macOS) / CUDA (Linux/Windows)
-- Temperature: 0.7 (RAG) / 0.75 (Chat)
-- Thread optimization: CPU cores - 2
+**Budget & Finance:**
+- "What is Ghana's 2025 budget for education?"
+- "How much was allocated to healthcare in 2024?"
+- "What are the main sources of government revenue?"
 
-### Database Configuration
-- Embedding model: multi-qa-MiniLM-L6-dot-v1
-- Chunk size: 1000 tokens
-- Chunk overlap: 200 tokens
-- Distance threshold: 1.2
+**Legal & Governance:**
+- "What is the current income tax rate in Ghana?"
+- "Explain the Electronic Transfer Levy Act"
+- "What are the functions of the Ghana Police Service?"
 
-## 📊 Ghana Knowledge Base
+**Economy & Development:**
+- "What are Ghana's main export commodities?"
+- "Tell me about the Ghana Stock Exchange performance"
+- "What development projects are planned for 2025?"
 
-The system includes comprehensive information about:
-- **Government & Politics**: Constitutional law, governance, policies
-- **Economy**: GDP, trade, agriculture, mining, oil & gas
-- **Education**: School system, universities, educational policies
-- **Healthcare**: Public health, medical facilities, health statistics
-- **Geography & Climate**: Regions, climate patterns, environmental data
-- **Culture & Tourism**: Heritage sites, attractions, cultural practices
-- **Security**: Police, military, emergency services
+## � About start_kiki.sh
 
-## 🛠️ Development
+The `start_kiki.sh` script is a convenient startup helper that:
+- Automatically activates your virtual environment if it exists
+- Checks if Flask-CORS is installed and installs it if missing
+- Starts the Flask server from the correct directory
+- Shows you the URL to open in your browser
 
-### Adding New Document Types
-1. Implement processing function in `chroma_utilities.py`
-2. Add route handler in `app.py`
-3. Update frontend to support new file type
+**Is it necessary?** No, you can start Kiki manually with `cd python && python app.py`, but the script makes it easier and handles common setup issues.
 
-### Extending Knowledge Base
-1. Add URLs to `populate_db.py`
-2. Run population script to update database
-3. Test retrieval accuracy
+## 🗂️ Project Structure
 
-### Memory System Customization
-- Configure in `memory_system.py`
-- Choose between BART and Gemma summarization
-- Adjust memory limits and cleanup thresholds
+```
+Kiki-Chatbot/
+├── python/               # Backend Python code
+│   ├── app.py           # Main Flask server
+│   ├── model_utilities.py    # AI model handling
+│   ├── chroma_utilities.py   # Document processing
+│   └── memory_system.py      # Chat memory
+├── html/                # Web interface
+│   ├── kiki_chat.html   # Main chat page
+│   ├── rag_file.html    # File upload page
+│   └── scrape_url.html  # URL scraping page
+├── js/                  # JavaScript code
+├── css/                 # Styling
+├── model/               # AI model files (1.6GB)
+├── vector_db/           # Pre-built document embeddings
+├── pdf_datasets/        # 60+ Ghana documents
+└── requirements.txt     # Python dependencies
+```
 
-## 📈 Performance Optimization
+## � Troubleshooting
 
-### Model Optimization
-- GPU acceleration for faster inference
-- Model quantization for memory efficiency
-- Batch processing for multiple requests
+**Kiki won't start:**
+- Make sure you're in the project directory
+- Activate your virtual environment: `source .venv/bin/activate`
+- Install requirements: `pip install -r requirements.txt`
 
-### Database Optimization
-- Efficient chunking strategy
-- Optimized embedding dimensions
-- Smart retrieval algorithms
+**Voice features don't work:**
+- Use Chrome, Edge, or Safari browser
+- Allow microphone permissions when prompted
+- Check that your microphone is working
 
-### Memory Management
-- Automatic conversation summarization
-- Token limit enforcement
-- Background processing for non-blocking operations
+**Slow responses:**
+- Kiki needs 4-8GB RAM to run efficiently
+- Close other memory-intensive applications
+- The first response takes longer as the model loads
 
-## 🔒 Security & Privacy
-
-- Local model execution (no external API calls)
-- On-device speech processing
-- Secure file handling with temporary storage
-- Input sanitization and validation
+**Can't upload files:**
+- Check file format: PDF, DOCX, PPTX, CSV, XLSX are supported
+- File size limit is typically 50MB
+- Make sure the file isn't corrupted
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+Want to improve Kiki? Here's how:
+1. Fork the repository on GitHub
+2. Make your improvements
+3. Test thoroughly
+4. Submit a pull request
 
-## 📝 License
+## � Support
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- **Google**: Gemma 2B language model
-- **Chroma**: Vector database platform
-- **Hugging Face**: Embedding models and transformers
-- **Flask**: Web application framework
-- **PyMuPDF**: PDF processing capabilities
-
-## 📞 Support
-
-For questions, issues, or contributions:
-- Open an issue on GitHub
-- Check the documentation in `/docs`
-- Review the code comments for implementation details
+Having issues? Here are your options:
+- **GitHub Issues**: Report bugs or request features
+- **Code Comments**: Check the Python files for detailed explanations
+- **Documentation**: Look in the `docs/` folder for technical details
 
 ---
 
-**Built with ❤️ for Ghana and its people**
+**Built for Ghana 🇬🇭 - Empowering citizens with accessible government information**
