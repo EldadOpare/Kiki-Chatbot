@@ -771,7 +771,11 @@ if __name__ == '__main__':
                 print(" Will fall back to Gemma when needed")
 
         print("\n")
-        print("Server starting at http://localhost:5081")
+        # Use port 7860 for Hugging Face Spaces, fallback to 5081 for local
+        port = int(os.environ.get('PORT', 5081))
+        print(f"Server starting at http://localhost:{port}")
         print("\n")
 
-    app.run(debug=True, host='0.0.0.0', port=5081, use_reloader=False)
+    # Use port from environment variable (7860 for HF Spaces, 5081 for local)
+    port = int(os.environ.get('PORT', 5081))
+    app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)

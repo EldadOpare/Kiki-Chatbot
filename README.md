@@ -2,6 +2,8 @@
 
 An intelligent AI chatbot that answers questions about Ghana using official government documents, budget reports, and legal acts. Built with the Gemma 2B language model and powered by a comprehensive Ghana-specific knowledge base.
 
+
+
 ## ✨ What Kiki Can Do
 
 - **Ask Questions About Ghana**: Get accurate answers from 60+ official documents including budget reports, government acts, and policies
@@ -184,4 +186,4 @@ Having issues? Here are your options:
 
 ---
 
-**Built for Ghana 🇬🇭 - Empowering citizens with accessible government information**
+
