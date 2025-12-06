@@ -30,11 +30,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Model files (too large for GitHub)
-*.bin
-*.gguf
-*.ggml
-model/
+# Model files (tracked with Git LFS - see .gitattributes)
+# *.bin
+# *.gguf
+# *.ggml
+# model/
 *.safetensors
 *.pt
 *.pth
