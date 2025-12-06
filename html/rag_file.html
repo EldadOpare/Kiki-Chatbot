@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Your File - Kiki AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/rag_style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-avatar">K</div>
+                    <div class="logo-text">
+                        <div class="logo-title">KIKI</div>
+                        <div class="logo-subtitle">AI Assistant</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="new-chat-btn" onclick="window.location.href='/'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Chat
+            </button>
+
+            <div class="climate-widget">
+                <div class="climate-header">Ghana Climate</div>
+                <div class="climate-location">Accra</div>
+                <div class="climate-data" id="climateData">
+                    <div class="loading-climate">Loading...</div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="settings-item">
+                    <span class="settings-icon">⚙️</span>
+                    <span>Settings</span>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <span>User Name</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rag-page">
+            <div class="rag-container">
+                <div class="bg-decoration">
+                    <div class="circle circle-1"></div>
+                    <div class="circle circle-2"></div>
+                    <div class="circle circle-3"></div>
+                </div>
+
+                <div class="rag-header">
+                    <div class="header-content">
+                        <div class="icon-badge">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <h1>RAG Your File</h1>
+                        <p class="subtitle">Upload any PDF and ask questions - get instant answers</p>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-step active" id="progress1">
+                        <div class="step-circle">1</div>
+                        <span>Question</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" id="progress2">
+                        <div class="step-circle">2</div>
+                        <span>Upload</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" id="progress3">
+                        <div class="step-circle">3</div>
+                        <span>Answer</span>
+                    </div>
+                </div>
+
+                <div class="rag-content">
+                    <div class="step-section active" id="querySection">
+                        <div class="step-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        <h2>What would you like to know?</h2>
+                        <p class="step-description">Enter your question first, then we'll ask for your document</p>
+                        <textarea
+                            id="queryInput"
+                            class="query-textarea"
+                            placeholder="Example: What are the main conclusions of this research?"
+                            rows="4"
+                        ></textarea>
+                        <button class="next-btn" id="nextToUploadBtn">
+                            Continue
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="step-section" id="uploadSection">
+                        <div class="step-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <h2>Upload your document</h2>
+                        <p class="step-description">Drop your file here or click to browse</p>
+
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </div>
+                            <p class="upload-text">Drop your file here</p>
+                            <p class="upload-hint">or click to browse</p>
+                            <p class="supported-types">Supported: PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx, .xls), CSV</p>
+                            <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,.csv,.xlsx,.xls" style="display: none;">
+                        </div>
+
+                        <div class="selected-file" id="selectedFile">
+                            <div class="file-info">
+                                <span class="file-icon">📄</span>
+                                <span class="file-name" id="fileName"></span>
+                            </div>
+                            <button class="remove-file-btn" id="removeFileBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="secondary-btn" id="backToQueryBtn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Back
+                            </button>
+                            <button class="primary-btn" id="submitBtn" disabled>
+                                Get Answer
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step-section" id="resultsSection">
+                        <div class="step-icon success">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" margin-right="50px">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <h2>Your Answer</h2>
+
+                        <div class="result-card">
+                            <div class="result-header">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <strong>Your Question</strong>
+                            </div>
+                            <p id="displayQuestion" class="question-text"></p>
+                        </div>
+
+                        <div class="result-card answer-card">
+                            <div class="result-header">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#48bb78" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <strong>Answer from Document</strong>
+                            </div>
+                            <div id="answerDisplay">
+                                <div class="loading-answer">
+                                    <div class="loader"></div>
+                                    <span class="typing-indicator">Kiki is analyzing your document...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/" class="secondary-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Back to Chat
+                            </a>
+                            <button class="primary-btn" id="newQueryBtn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                </svg>
+                                Ask Another Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchClimateData() {
+            const API_KEY = '19942997e8fda3f20d9a4434ac3009ee';
+            const ACCRA_LAT = 5.6037;
+            const ACCRA_LON = -0.1870;
+            const climateDataDiv = document.getElementById('climateData');
+
+            try {
+                const [weatherResponse, forecastResponse, airQualityResponse] = await Promise.all([
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${ACCRA_LAT}&lon=${ACCRA_LON}&units=metric&appid=${API_KEY}`),
+                    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${ACCRA_LAT}&lon=${ACCRA_LON}&units=metric&appid=${API_KEY}`),
+                    fetch(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${ACCRA_LAT}&lon=${ACCRA_LON}&appid=${API_KEY}`)
+                ]);
+
+                if (!weatherResponse.ok) throw new Error('Failed to fetch weather data');
+
+                const weatherData = await weatherResponse.json();
+                const forecastData = forecastResponse.ok ? await forecastResponse.json() : null;
+                const airQualityData = airQualityResponse.ok ? await airQualityResponse.json() : null;
+
+                const airQualityIndex = airQualityData?.list[0]?.main?.aqi;
+                const airQualityLabels = ['Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'];
+                const airQualityText = airQualityIndex ? airQualityLabels[airQualityIndex - 1] : 'N/A';
+
+                let forecastHTML = '';
+                if (forecastData?.list) {
+                    const dailyForecasts = {};
+                    forecastData.list.forEach(item => {
+                        const date = item.dt_txt.split(' ')[0];
+                        if (!dailyForecasts[date]) {
+                            dailyForecasts[date] = {
+                                temps: [],
+                                descriptions: [],
+                                date: date
+                            };
+                        }
+                        dailyForecasts[date].temps.push(item.main.temp);
+                        dailyForecasts[date].descriptions.push(item.weather[0].description);
+                    });
+
+                    const today = new Date().toISOString().split('T')[0];
+                    const forecastDays = Object.keys(dailyForecasts)
+                        .filter(date => date > today)
+                        .slice(0, 5);
+
+                    if (forecastDays.length > 0) {
+                        forecastHTML = '<div class="forecast-section"><div class="forecast-title">5-Day Forecast</div>';
+                        forecastDays.forEach(date => {
+                            const dayData = dailyForecasts[date];
+                            const avgTemp = Math.round(dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length);
+                            const mostCommonDesc = dayData.descriptions.sort((a, b) =>
+                                dayData.descriptions.filter(v => v === a).length - dayData.descriptions.filter(v => v === b).length
+                            ).pop();
+                            const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
+
+                            forecastHTML += `
+                                <div class="forecast-day">
+                                    <span class="forecast-day-name">${dayName}</span>
+                                    <span class="forecast-day-desc">${mostCommonDesc}</span>
+                                    <span class="forecast-day-temp">${avgTemp}°C</span>
+                                </div>`;
+                        });
+                        forecastHTML += '</div>';
+                    }
+                }
+
+                climateDataDiv.innerHTML = `
+                    <div class="climate-temp">${Math.round(weatherData.main.temp)}°C</div>
+                    <div class="climate-description">${weatherData.weather[0].description}</div>
+                    <div class="climate-detail">
+                        <span>Feels Like</span>
+                        <span>${Math.round(weatherData.main.feels_like)}°C</span>
+                    </div>
+                    <div class="climate-detail">
+                        <span>Humidity</span>
+                        <span>${weatherData.main.humidity}%</span>
+                    </div>
+                    <div class="climate-detail">
+                        <span>Wind</span>
+                        <span>${weatherData.wind.speed} m/s</span>
+                    </div>
+                    <div class="climate-detail">
+                        <span>Pressure</span>
+                        <span>${weatherData.main.pressure} hPa</span>
+                    </div>
+                    <div class="climate-detail">
+                        <span>Air Quality</span>
+                        <span>${airQualityText}</span>
+                    </div>
+                    ${forecastHTML}
+                `;
+            } catch (error) {
+                climateDataDiv.innerHTML = `
+                    <div class="climate-temp">--°C</div>
+                    <div class="climate-description">Data unavailable</div>
+                    <div class="climate-detail">
+                        <span>Unable to load climate data</span>
+                    </div>
+                `;
+            }
+        }
+
+        window.addEventListener('load', () => {
+            fetchClimateData();
+            setInterval(fetchClimateData, 300000); 
+        });
+    </script>
+    <script src="/js/rag_file.js"></script>
+</body>
+</html>

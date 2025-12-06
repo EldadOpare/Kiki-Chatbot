@@ -1,0 +1,488 @@
+================================================================================
+KIKI CHATBOT - VOICE FEATURES DOCUMENTATION
+================================================================================
+
+This document explains how the voice input (speech-to-text) and voice output
+(text-to-speech) features work in the Kiki chatbot application.
+
+================================================================================
+OVERVIEW
+================================================================================
+
+The voice features add two main capabilities to Kiki:
+
+1. VOICE INPUT (Speech-to-Text)
+   - Users can speak their questions instead of typing them
+   - Real-time transcription appears in the input field
+   - Click the microphone button (next to send button) to start/stop listening
+
+2. VOICE OUTPUT (Text-to-Speech)
+   - Kiki can speak her responses out loud
+   - Each message has its own speaker button at the bottom
+   - Click the speaker icon on any message to hear that specific response
+
+================================================================================
+HOW IT WORKS - TECHNICAL OVERVIEW
+================================================================================
+
+The voice features use the Web Speech API, which is built into modern browsers.
+This means:
+
+✓ ZERO LATENCY - Everything runs in the browser, no server needed
+✓ NO BACKEND - No extra API calls or processing delays
+✓ FREE - No API costs or usage limits
+✓ PRIVATE - Voice data never leaves your browser
+
+The system has 3 main parts:
+
+1. voice.js       - Utility module that wraps the Web Speech API
+2. script.js      - Integrates voice features with the chat interface
+3. kiki_chat.html - User interface with voice buttons
+
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+/js/voice.js
+│
+├── Speech Recognition Functions
+│   ├── initSpeechRecognition()  - Sets up the microphone
+│   ├── startListening()         - Begin voice input
+│   ├── stopListening()          - Stop voice input
+│   └── toggleListening()        - Start/stop toggle
+│
+├── Speech Synthesis Functions
+│   ├── speak(text)              - Speak text out loud
+│   ├── stopSpeaking()           - Stop speaking
+│   └── toggleAutoSpeak()        - Toggle auto-speak on/off
+│
+├── Callback Functions (for integration)
+│   ├── setOnSpeechResult()      - Called when speech is recognized
+│   ├── setOnListeningChange()   - Called when listening starts/stops
+│   └── setOnSpeakingChange()    - Called when speaking starts/stops
+│
+└── Utility Functions
+    ├── checkVoiceSupport()      - Check browser compatibility
+    ├── getIsListening()         - Get listening state
+    ├── getIsSpeaking()          - Get speaking state
+    └── getAutoSpeak()           - Get auto-speak state
+
+
+================================================================================
+HOW THE VOICE INPUT WORKS
+================================================================================
+
+Step-by-step process when you click the microphone button:
+
+1. USER CLICKS MICROPHONE BUTTON
+   └─> toggleListening() is called
+
+2. START LISTENING
+   └─> recognition.start() activates the browser's microphone
+   └─> Microphone button turns RED with pulse animation
+   └─> Visual status shows "Listening..."
+
+3. USER SPEAKS
+   └─> Browser's speech recognition processes audio in real-time
+   └─> As you speak, text appears in the input field (interim results)
+   └─> When you pause, the text is finalized
+
+4. STOP LISTENING
+   └─> Click microphone again OR recognition stops automatically
+   └─> Button returns to normal color
+   └─> Visual status hides
+
+The speech recognition uses these settings:
+- continuous: true       (keeps listening until you stop it)
+- interimResults: true   (shows text as you speak)
+- lang: 'en-US'          (English language)
+
+
+================================================================================
+HOW THE VOICE OUTPUT WORKS
+================================================================================
+
+Step-by-step process when you click a speaker button:
+
+1. KIKI GENERATES RESPONSE
+   └─> Text response is created by the AI
+   └─> Speaker button appears at the bottom of the message
+
+2. USER CLICKS SPEAKER BUTTON
+   └─> User can click the speaker icon on any Kiki message
+   └─> Clicking a new message stops any currently playing speech
+
+3. PREPARE TEXT FOR SPEECH
+   └─> Remove markdown formatting (**bold**, *italic*)
+   └─> Remove special characters and HTML tags
+   └─> Replace newlines with spaces
+
+4. SPEAK THE TEXT
+   └─> Browser's text-to-speech engine reads the text
+   └─> Visual status shows "Speaking..." with animated audio wave
+   └─> Speaker button pulses with blue animation
+   └─> Button shows active speaking state
+
+5. SPEECH COMPLETES
+   └─> Visual status hides
+   └─> Button returns to normal state
+   └─> User can click again to replay
+
+The speech synthesis uses these settings:
+- rate: 0.95    (slightly slower than normal for clarity)
+- pitch: 1.0    (normal pitch)
+- volume: 1.0   (maximum volume)
+
+
+================================================================================
+USER INTERFACE ELEMENTS
+================================================================================
+
+MICROPHONE BUTTON (Voice Input)
+Location: Input area, next to the send button
+┌─────────────┐
+│   🎤 Icon   │  ← Click to start/stop listening
+└─────────────┘
+   ↓
+Gray    = Ready to listen
+Red     = Currently listening (with pulse animation)
+Tooltip = "Voice Input" or "Stop Listening"
+
+
+PER-MESSAGE SPEAKER BUTTONS (Voice Output)
+Location: Bottom of each Kiki message
+┌─────────────┐
+│   🔊 Icon   │  ← Click to hear this specific message
+└─────────────┘
+   ↓
+Gray    = Ready to play (default state)
+Blue    = Currently speaking (with pulse animation)
+Tooltip = "Listen to this response"
+
+Benefits of per-message buttons:
+✓ Choose which responses to hear
+✓ Replay any previous response
+✓ Stop current speech by clicking another message
+✓ More control than global auto-speak
+
+
+VOICE STATUS INDICATOR
+┌──────────────────────────┐
+│  ⚫ Listening...         │  ← Shows when microphone is active
+└──────────────────────────┘
+
+┌──────────────────────────┐
+│  🔵 Speaking...          │  ← Shows when Kiki is talking
+└──────────────────────────┘
+
+Colors:
+- Red background   = Listening mode
+- Blue background  = Speaking mode
+- Animated dot     = Visual feedback
+
+
+================================================================================
+BROWSER COMPATIBILITY
+================================================================================
+
+SUPPORTED BROWSERS:
+✓ Google Chrome (Desktop & Mobile)
+✓ Microsoft Edge
+✓ Opera
+✓ Samsung Internet
+
+PARTIAL SUPPORT:
+⚠ Safari (Text-to-speech works, speech recognition limited)
+
+NOT SUPPORTED:
+✗ Firefox (No Web Speech API support yet)
+✗ Internet Explorer
+
+COMPATIBILITY CHECK:
+- When you load the page, the system checks if your browser supports voice
+- If not supported, a friendly notification appears
+- Unsupported buttons are automatically hidden
+- Notification shows once per browser session
+- Auto-dismisses after 10 seconds
+
+
+================================================================================
+CODE INTEGRATION - FOR DEVELOPERS
+================================================================================
+
+The voice features are integrated with the chat system through callbacks:
+
+1. SPEECH RESULT CALLBACK
+   When speech is recognized, update the input field:
+
+   setOnSpeechResult(function(text) {
+       userInput.value = text;  // Put recognized text in input
+   });
+
+
+2. LISTENING STATE CALLBACK
+   Update the UI when listening starts/stops:
+
+   setOnListeningChange(function(isListening) {
+       if (isListening) {
+           micBtn.classList.add('listening');
+           voiceStatus.style.display = 'flex';
+           voiceStatus.className = 'voice-status listening';
+       } else {
+           micBtn.classList.remove('listening');
+           voiceStatus.style.display = 'none';
+       }
+   });
+
+
+3. SPEAKING STATE CALLBACK
+   Update the UI when speech starts/stops:
+
+   setOnSpeakingChange(function(speaking) {
+       if (speaking) {
+           voiceStatus.style.display = 'flex';
+           voiceStatus.className = 'voice-status speaking';
+       } else {
+           voiceStatus.style.display = 'none';
+           // Remove speaking class from all speaker buttons
+           document.querySelectorAll('.message-speaker-btn.speaking').forEach(btn => {
+               btn.classList.remove('speaking');
+           });
+       }
+   });
+
+
+4. PER-MESSAGE SPEAKER BUTTONS
+   Each Kiki message gets its own speaker button:
+
+   // Add speaker button for bot messages
+   if (!isUser) {
+       const speakerBtn = document.createElement('button');
+       speakerBtn.className = 'message-speaker-btn';
+       speakerBtn.innerHTML = `<svg>...</svg>`;
+
+       // Clean text for speech
+       const cleanText = text
+           .replace(/\*\*/g, '')
+           .replace(/\*/g, '')
+           .replace(/\n/g, ' ');
+
+       // Click handler
+       speakerBtn.addEventListener('click', function() {
+           stopSpeaking();  // Stop any current speech
+           speak(cleanText);  // Speak this message
+           speakerBtn.classList.add('speaking');  // Visual feedback
+       });
+
+       messageContent.appendChild(speakerBtn);
+   }
+
+
+================================================================================
+CSS ANIMATIONS
+================================================================================
+
+PULSE ANIMATION (Listening - Microphone Button)
+- Microphone button pulses with expanding red glow
+- Draws attention when actively listening
+- Keyframe animation at 1.5s interval
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+    }
+}
+
+
+PULSE ANIMATION (Speaking - Per-Message Button)
+- Speaker button pulses with expanding blue glow
+- Shows which message is currently being spoken
+- Keyframe animation at 1.5s interval
+
+@keyframes pulse-speaker {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 114, 255, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(74, 114, 255, 0);
+    }
+}
+
+
+WAVE ANIMATION (Speaking)
+- Animated audio wave bars in the status indicator
+- Creates visual representation of speech
+- Two bars animate at different intervals
+
+@keyframes wave {
+    0%, 100% { height: 6px; }
+    50% { height: 16px; }
+}
+
+
+FADE-IN ANIMATION (Status Indicator)
+- Smooth appearance when status shows
+- 0.3s ease animation
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+MICROPHONE NOT WORKING?
+□ Check if browser supports speech recognition
+□ Grant microphone permissions when prompted
+□ Ensure microphone is not being used by another app
+□ Try Chrome or Edge if using a different browser
+□ Check system microphone settings/privacy controls
+
+
+NO VOICE OUTPUT?
+□ Check if auto-speak is enabled (speaker button should be blue)
+□ Verify browser volume is not muted
+□ Check system volume settings
+□ Try clicking the speaker button to toggle it off and on
+
+
+VOICE BUTTONS NOT SHOWING?
+□ Browser doesn't support Web Speech API
+□ Use Chrome or Edge for full compatibility
+□ Check browser console for errors
+
+
+VOICE RECOGNITION STOPS UNEXPECTEDLY?
+□ This is normal after long pauses
+□ Click microphone button to restart
+□ Browser security requires user interaction to restart
+
+
+================================================================================
+FUTURE ENHANCEMENTS (Not Yet Implemented)
+================================================================================
+
+These features could be added in the future:
+
+□ Language selection (currently English only)
+□ Voice speed control for text-to-speech
+□ Voice selection (different voice options)
+□ Wake word detection ("Hey Kiki")
+□ Voice commands for app control
+□ Accent/dialect selection
+□ Noise cancellation improvements
+
+
+================================================================================
+PRIVACY & SECURITY
+================================================================================
+
+WHAT HAPPENS TO YOUR VOICE DATA?
+
+✓ All voice processing happens IN YOUR BROWSER
+✓ No voice data is sent to Kiki's servers
+✓ The Web Speech API may use browser's cloud services:
+  - Chrome uses Google's speech recognition servers
+  - Edge uses Microsoft's speech recognition servers
+
+✓ Voice data is only transmitted for recognition processing
+✓ Data is not stored permanently by the browser
+✓ You can deny microphone permissions if concerned
+
+MICROPHONE PERMISSIONS:
+- Browser will ask for permission on first use
+- Permission is required for speech recognition
+- You can revoke permissions in browser settings
+- Red camera/mic indicator shows when active (browser feature)
+
+
+================================================================================
+TECHNICAL SPECIFICATIONS
+================================================================================
+
+WEB SPEECH API COMPONENTS USED:
+
+1. SpeechRecognition Interface
+   - Provides speech recognition service
+   - Converts spoken audio to text
+   - Supports continuous recognition
+   - Returns interim and final results
+
+2. SpeechSynthesis Interface
+   - Provides text-to-speech service
+   - Converts text to spoken audio
+   - Supports voice selection
+   - Supports rate, pitch, volume controls
+
+3. SpeechSynthesisUtterance
+   - Represents a speech request
+   - Contains the text to be spoken
+   - Holds voice settings (rate, pitch, volume)
+
+
+BROWSER IMPLEMENTATION:
+- Based on Web Speech API Specification
+- W3C Community Group Report
+- Implemented natively in Chromium-based browsers
+
+
+================================================================================
+CREDITS
+================================================================================
+
+Voice features implemented using:
+- Web Speech API (built into browsers)
+- No external libraries required
+- Pure JavaScript implementation
+- Follows best practices for accessibility
+
+
+================================================================================
+SUPPORT
+================================================================================
+
+For questions or issues:
+1. Check browser compatibility section above
+2. Verify microphone/speaker permissions
+3. Test with Chrome or Edge browser
+4. Check browser console for error messages
+
+
+================================================================================
+VERSION HISTORY
+================================================================================
+
+v1.0 - Initial Implementation
+- Basic speech-to-text (microphone button)
+- Basic text-to-speech (global speaker toggle)
+- Auto-speak toggle functionality
+- Visual status indicators
+- Browser compatibility check
+- Animated feedback (pulse, wave animations)
+- Comprehensive documentation
+
+v2.0 - Per-Message Speaker Buttons (CURRENT)
+- Moved microphone to input area (next to send button)
+- Removed global auto-speak toggle
+- Added individual speaker button to each Kiki message
+- Users can now play/replay any specific response
+- Clicking a new message stops current speech
+- Improved UX with granular control
+- Updated animations for per-message buttons
+- Enhanced documentation with new UX patterns
+
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

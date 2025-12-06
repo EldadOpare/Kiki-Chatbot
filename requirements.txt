@@ -1,0 +1,15 @@
+flask>=2.0.0
+flask-cors>=3.0.0
+torch
+transformers
+chromadb
+llama-cpp-python
+beautifulsoup4
+sentence-transformers
+requests
+easyocr
+tiktoken
+pandas
+python-docx
+python-pptx
+openpyxl
