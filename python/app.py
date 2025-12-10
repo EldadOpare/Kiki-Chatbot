@@ -522,7 +522,7 @@ def upload_image():
                 'success': False,
                 'error': 'No image provided'
             }), 400
-
+ 
         file = request.files['image']
 
         # Check if file is selected
@@ -731,6 +731,136 @@ def scrape_url_endpoint():
             'success': True,
             'answer': answer,
             'message': f'Successfully scraped and added content from: {url}'
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/scrape_url_rag', methods=['POST'])
+def scrape_url_rag():
+    """
+    Step 1: Scrape URL content and add to temporary collection
+    Returns a document_id for later querying
+    """
+    try:
+        data = request.get_json()
+        url = data.get('url', '').strip()
+
+        if not url:
+            return jsonify({
+                'success': False,
+                'error': 'No URL provided'
+            }), 400
+
+        # Basic URL validation
+        if not url.startswith('http://') and not url.startswith('https://'):
+            return jsonify({
+                'success': False,
+                'error': 'URL must start with http:// or https://'
+            }), 400
+
+        # Create unique document ID from URL
+        import hashlib
+        document_id = hashlib.md5(url.encode()).hexdigest()
+
+        # Create/get temporary collection for this document
+        temp_collection_name = f'temp_url_{document_id}'
+        try:
+            client.delete_collection(name=temp_collection_name)
+        except:
+            pass
+
+        temp_collection = client.create_collection(
+            name=temp_collection_name,
+            embedding_function=sentence_transformer_ef
+        )
+
+        # Scrape and add to temporary collection
+        success = scrape_url_to_database(url, temp_collection)
+
+        if not success:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to scrape URL. The site may be blocking requests or contains no text content.'
+            }), 400
+
+        return jsonify({
+            'success': True,
+            'document_id': document_id,
+            'message': f'Successfully scraped content from: {url}'
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/query_document', methods=['POST'])
+def query_document():
+
+    
+    try:
+        data = request.get_json()
+        document_id = data.get('document_id', '').strip()
+        question = data.get('question', '').strip()
+
+        if not document_id:
+            return jsonify({
+                'success': False,
+                'error': 'No document_id provided'
+            }), 400
+
+        if not question:
+            return jsonify({
+                'success': False,
+                'error': 'No question provided'
+            }), 400
+
+        # Get the temporary collection
+        temp_collection_name = f'temp_url_{document_id}'
+        try:
+            temp_collection = client.get_collection(
+                name=temp_collection_name,
+                embedding_function=sentence_transformer_ef
+            )
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Document not found. Please scrape the URL first.'
+            }), 404
+
+        answer = rag_query(question, temp_collection, n_results=5, include_sources=True, use_memory=False)
+
+        try:
+           
+            temp_data = temp_collection.get()
+
+            if temp_data and temp_data['documents']:
+                
+                db.upsert(
+                    documents=temp_data['documents'],
+                    ids=[f"main_{doc_id}" for doc_id in temp_data['ids']],  # Prefix to avoid ID conflicts
+                    metadatas=temp_data['metadatas']
+                )
+        except Exception as e:
+            print(f"Warning: Failed to add content to main database: {e}")
+           
+
+    
+        try:
+            client.delete_collection(name=temp_collection_name)
+        except:
+            pass
+
+        return jsonify({
+            'success': True,
+            'answer': answer
         })
 
     except Exception as e:

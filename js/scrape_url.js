@@ -13,21 +13,34 @@ const API_URL = 'http://localhost:5081/api';
 
 //DOM Elements - We selected all the elements needed for the URL scraping interface
 const queryInput = document.getElementById('queryInput');
+
 const nextToUrlBtn = document.getElementById('nextToUrlBtn');
+
 const querySection = document.getElementById('querySection');
+
 const urlSection = document.getElementById('urlSection');
+
 const resultsSection = document.getElementById('resultsSection');
+
 const urlInput = document.getElementById('urlInput');
+
 const backToQueryBtn = document.getElementById('backToQueryBtn');
+
 const submitBtn = document.getElementById('submitBtn');
+
 const displayQuestion = document.getElementById('displayQuestion');
+
 const displayUrl = document.getElementById('displayUrl');
+
 const answerDisplay = document.getElementById('answerDisplay');
+
 const newQueryBtn = document.getElementById('newQueryBtn');
 
 //Progress Indicators - We used these to show the user's progress through the steps
 const progress1 = document.getElementById('progress1');
+
 const progress2 = document.getElementById('progress2');
+
 const progress3 = document.getElementById('progress3');
 
 //Step 1: Next to URL input - We handled moving from query input to URL input
