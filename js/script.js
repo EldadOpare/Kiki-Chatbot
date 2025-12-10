@@ -7,13 +7,20 @@ The script managed conversation history, file uploads, voice recording, and dyna
 to create a seamless chat experience for users interacting with our Ghana-focused AI assistant.
 */
 
-//DOM Elements - We selected all the key elements we needed for the chat interface
+
+
 const userInput = document.getElementById('userInput');
+
 const sendBtn = document.getElementById('sendBtn');
+
 const chatMessages = document.getElementById('chatMessages');
+
 const newChatBtn = document.querySelector('.new-chat-btn');
+
 const conversationList = document.getElementById('conversationList');
+
 const ragModeRadio = document.getElementById('ragMode');
+
 const chatModeRadio = document.getElementById('chatMode');
 
 //Voice Elements - We set up voice recording functionality
@@ -275,7 +282,7 @@ async function sendMessage() {
 function saveToConversationHistory(firstMessage) {
     if (chatMessages.querySelectorAll('.message').length <= 2) {
         const conversationTitle = firstMessage.substring(0, 40) + (firstMessage.length > 40 ? '...' : '');
-        addConversationToSidebar(conversationTitle);
+        // addConversationToSidebar(conversationTitle); // Commented out - function not implemented
     }
 }
 
@@ -781,15 +788,11 @@ if (micBtn) {
     });
 }
 
-// =============================================================================
-// VOICE SELECTOR FUNCTIONALITY
-// =============================================================================
+
 
 const voiceSelect = document.getElementById('voiceSelect');
 
-/**
- * Populate the voice selector dropdown with available voices
- */
+
 function populateVoiceSelector() {
     const voices = getAvailableVoices();
 
@@ -804,17 +807,24 @@ function populateVoiceSelector() {
 
     // Group voices by language for better organization
     const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+    
     const otherVoices = voices.filter(v => !v.lang.startsWith('en'));
 
     // Add English voices first
     if (englishVoices.length > 0) {
+        
         const englishGroup = document.createElement('optgroup');
+        
         englishGroup.label = 'English Voices';
 
         englishVoices.forEach(voice => {
+            
             const option = document.createElement('option');
+            
             option.value = voice.name;
+            
             option.textContent = voice.name;
+            
             englishGroup.appendChild(option);
         });
 
@@ -836,13 +846,11 @@ function populateVoiceSelector() {
         voiceSelect.appendChild(otherGroup);
     }
 
-    // Set the selected voice in the dropdown
+   
     updateVoiceSelector();
 }
 
-/**
- * Update the dropdown to show the currently selected voice
- */
+/* Update the dropdown to show the currently selected voice */
 function updateVoiceSelector() {
     const voices = getAvailableVoices();
     const currentVoice = voices.find(v => v.name === voiceSelect.value);
@@ -858,9 +866,7 @@ function updateVoiceSelector() {
     }
 }
 
-/**
- * Handle voice selection change
- */
+/* Handle voice selection change */
 if (voiceSelect) {
     voiceSelect.addEventListener('change', function() {
         const selectedVoiceName = this.value;
@@ -869,20 +875,18 @@ if (voiceSelect) {
         if (success) {
             console.log('Voice changed to:', selectedVoiceName);
 
-            // Optional: Speak a sample text to preview the voice
-            // Uncomment the line below if you want to hear the voice when selected
-            // speak('Hello, this is the selected voice.');
+
         }
     });
 }
 
 // Initialize voice selector when page loads
 if (typeof window !== 'undefined' && window.speechSynthesis) {
-    // Wait for voices to load
+
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
         window.speechSynthesis.onvoiceschanged = populateVoiceSelector;
     }
 
-    // Also try immediately in case voices are already loaded
+  
     setTimeout(populateVoiceSelector, 200);
 }

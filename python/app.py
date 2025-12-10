@@ -337,7 +337,7 @@ def qa_query(question, max_tokens=1500, temperature=0.75):
     # Generate answer
     answer = generate(prompt, max_tokens=max_tokens, temperature=temperature)
 
-    # Add to memory in background thread so summarization doesn't block the response
+    # We add to memory in background thread so that summarization doesn't block the response
     threading.Thread(
         target=add_to_memory,
         args=(question, answer, "chat"),
