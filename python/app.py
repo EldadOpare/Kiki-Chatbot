@@ -125,7 +125,7 @@ def load_model(model_path="model/gemma2-2b.bin", n_ctx=8192, n_threads=None):
 
     global MODEL
 
-    #We optimized thread count for M1 Mac (8-core system)
+    #We optimized the thread count for M1 Mac (8-core system)
     if n_threads is None:
         import os
         cpu_count = os.cpu_count() or 8
@@ -168,9 +168,11 @@ def load_model(model_path="model/gemma2-2b.bin", n_ctx=8192, n_threads=None):
             model_path=model_path,
             n_ctx=n_ctx,
             n_threads=n_threads,
+            
             #We enabled GPU layers for faster processing
             n_gpu_layers=32,      
             verbose=False,
+            
             #We set the seed for consistency
             seed=42               
         )
@@ -238,7 +240,8 @@ def generate(prompt, max_tokens=1500, temperature=0.7):
         result = output['choices'][0]['text'].strip()
         
         # If response is too short, try to get more content
-        if len(result) < 100:
+        # we left this changeable based on what you are looking for 
+        if len(result) < 20:
             output = MODEL(
                 prompt + " Please provide a detailed and comprehensive answer.",
                 max_tokens=max_tokens,
@@ -260,21 +263,28 @@ def generate(prompt, max_tokens=1500, temperature=0.7):
 def rag_query(question, collection, n_results=5, include_sources=True, max_tokens=1500, distance_threshold=1.2, use_memory=True):
     """
     Query the database and generate an answer using RAG
-
-    Args:
-        use_memory: If True, uses conversation memory. If False, gives clean response without history (for one-off queries)
     """
 
     if MODEL is None:
         return "Error: Model not loaded"
 
-    # Querying the database for relevant chunks with distance threshold
-    results = query_database(question, collection, n_results, distance_threshold)
+    # To cater for follow up questions, we took an adaptive threshold approach where we try primary threshold first, then a fallback
+    primary_threshold = distance_threshold
+    fallback_threshold = 1.5
+
+    # We first try the primary threshold first
+    results = query_database(question, collection, n_results, primary_threshold)
+    
+    # If no relevant results with primary threshold are found, we then try the fallback threshold
+    if not results['is_relevant'] or len(results['chunks']) == 0:
+
+        results = query_database(question, collection, n_results, fallback_threshold)
+    
     chunks = results['chunks']
     sources = results['sources']
     is_relevant = results['is_relevant']
 
-    # If the question is not relevant to our database, return a polite message
+    # If still no relevant results even with fallback threshold, return polite message
     if not is_relevant or len(chunks) == 0:
         return "I'm sorry, but I don't have information about that topic in my knowledge base. I'm specifically designed to answer questions about Ghana. Could you please ask me something related to Ghana?"
 
