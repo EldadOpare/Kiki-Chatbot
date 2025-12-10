@@ -19,11 +19,19 @@ from chromadb.utils import embedding_functions
 
 
 #For the main program, we used vector_db as the ChromaDB path so we maintain consistency by populating our datasets into the same path.
-CHROMA_PATH = "../vector_db"
-PDF_DATASETS_PATH = "../pdf_datasets"
+import os
+
+# We got the absolute path to the script's directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = os.path.dirname(SCRIPT_DIR)
+
+CHROMA_PATH = os.path.join(BASE_DIR, "vector_db")
+PDF_DATASETS_PATH = os.path.join(BASE_DIR, "pdf_datasets")
 
 
 #These are our target URLs to scrape data from.
+#Some of our sources failed to scrape because their sites blocked some scrapper bots 
 urls_to_scrape = [
     "https://www.bbc.com/news/world-africa-13433790",
     "https://whc.unesco.org/en/list/34/",
@@ -213,9 +221,11 @@ def populate_database():
         
         # We checked if the collection has the right embedding function
         try:
+            
             # We tested compatibility with a small query
             test_result = collection.query(query_texts=["test"], n_results=1)
         except Exception as e:
+            
             # If incompatible, we deleted and recreated the collection
             client.delete_collection(name="Ghana_chatbot")
             collection = client.create_collection(
@@ -225,6 +235,7 @@ def populate_database():
             )
             
     except Exception as e:
+        
         # We created a new collection if one didn't exist
         collection = client.create_collection(
             name="Ghana_chatbot",
@@ -233,24 +244,35 @@ def populate_database():
         )
 
     # We then process all our URLs using the utility function we designed in chroma_utilities.py
-    print("\nProcessing URLs using scrape_multiple_urls_to_database...\n")
+    print("\nSkipping URL Processing (already completed)...")
     
-    scrape_multiple_urls_to_database(urls_to_scrape, collection)
+    # scrape_multiple_urls_to_database(urls_to_scrape, collection)
     
-    print("\nURL Processing Complete!")
+    print("\nURL Processing Skipped!")
 
     # After the scrapping, we processed the PDF files from pdf_datasets folder
-    print("\nStarting PDF Dataset Processing\n")
+    print(f"\nStarting PDF Dataset Processing from: {PDF_DATASETS_PATH}")
+    
     print(f"Processing {len(pdfs_to_process)} PDF files\n")
 
     for idx, pdf_file in enumerate(pdfs_to_process, 1):
         print(f"[{idx}/{len(pdfs_to_process)}] Processing: {pdf_file}")
 
         # Build the full path to the PDF file
-        pdf_path = PDF_DATASETS_PATH + "/" + pdf_file
+        pdf_path = os.path.join(PDF_DATASETS_PATH, pdf_file)
+        
+        # Check if the file exists before processing
+        if not os.path.exists(pdf_path):
+            print(f"Warning: File not found: {pdf_path}")
+            continue
 
         # Add the PDF to the database using our utility function
-        pdf_to_database(pdf_path, collection)
+        try:
+            pdf_to_database(pdf_path, collection)
+            print(f"Successfully processed: {pdf_file}")
+        except Exception as e:
+            print(f"Error processing {pdf_file}: {e}")
+            continue
 
         
 
